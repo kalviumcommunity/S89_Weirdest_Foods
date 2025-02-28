@@ -1,5 +1,3 @@
-# S89_Weirdest_Foods
-
 ### Project Title:
 **List of the World's Weirdest Foods**
 
