@@ -1,4 +1,3 @@
-### Project Title:
 **List of the World's Weirdest Foods**
 
 ### Project Overview:
