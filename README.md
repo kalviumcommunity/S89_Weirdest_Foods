@@ -1,4 +1,3 @@
-### Project Title:
 **List of the World's Weirdest Foods**
 
 ### Project Overview:
@@ -21,3 +20,4 @@ This project allows users to explore a list of the world's weirdest foods, contr
 This project taps into the fascinating and sometimes shocking world of unique culinary experiences, making it engaging and informative for users. It covers a comprehensive range of skills, including user authentication, data submission and retrieval, real-time updates, and social features like voting and commenting. By working on this project, you'll have the opportunity to practice and master full-stack web development tools and concepts.
 
 ### Allow Users to Share and rate their own Foods creations
+
