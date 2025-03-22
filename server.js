@@ -16,7 +16,6 @@ async function connectDataBase() {
     console.log("Backend connected successfully");
   } catch (error) {
     console.error("Database connection error:", error);
-    throw error; // Re-throw to handle gracefully elsewhere
   }
 }
 
