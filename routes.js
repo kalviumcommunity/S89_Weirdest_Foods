@@ -15,7 +15,7 @@ router.post('/foods', async (req, res) => {
 });
 
 
-router.get('/ping', async (req, res) => {
+router.get('/foods/:id', async (req, res) => {
     try {
         const items = await Item.find(); 
         res.status(200).json({ message: 'pong', data: items });

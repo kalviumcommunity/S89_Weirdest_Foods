@@ -12,20 +12,17 @@ app.use(express.json());
 app.use('/routes', routes); 
 
 
-const connectDatabase = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log('Database connected successfully');
-    } catch (error) {
-        console.error('Database connection error:', error.message);
-        process.exit(1); 
-    }
-};
+try {
+  await mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  console.log('Database connected successfully');
+} catch (error) {
+  console.error('Database connection error:', error.message);
+  process.exit(1); 
+}
 
-connectDatabase();
 
 app.get('/', (req, res) => {
     res.send('Welcome! Server and Database are up and running.');
