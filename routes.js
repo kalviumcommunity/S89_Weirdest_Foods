@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Item = require('./schema');
 
-
 router.post('/foods', async (req, res) => {
     try {
         const newItem = new Item(req.body); 
