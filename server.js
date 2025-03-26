@@ -1,33 +1,37 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const routes = require('./routes');
+
+dotenv.config();
+
 const app = express();
-const mongoose = require("mongoose");
-require('dotenv').config();
+const PORT = process.env.PORT || 8080;
 
-app.get('/ping', (req, res) => {
-  res.send('pong');
+app.use(express.json()); 
+app.use('/routes', routes); 
+
+
+const connectDatabase = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URL, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log('Database connected successfully');
+    } catch (error) {
+        console.error('Database connection error:', error.message);
+        process.exit(1); 
+    }
+};
+
+connectDatabase();
+
+app.get('/', (req, res) => {
+    res.send('Welcome! Server and Database are up and running.');
 });
 
-async function connectDataBase() {
-  try {
-    await mongoose.connect(process.env.MONGO_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("Backend connected successfully");
-  } catch (error) {
-    console.error("Database connection error:", error);
-  }
-}
 
-app.get('/', async (req, res) => {
-  try {
-    await connectDataBase();
-    res.send("Database connection successful!");
-  } catch (error) {
-    res.status(500).send("Failed to connect to the database.");
-  }
-});
-
-app.listen(8080, () => {
-  console.log("Server Connected Successfully on port 8080");
+app.listen(PORT, () => {
+    console.log(`Server running successfully on port ${PORT}`);
 });
