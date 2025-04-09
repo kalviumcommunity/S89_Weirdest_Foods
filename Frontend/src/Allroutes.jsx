@@ -10,4 +10,4 @@ const Allroutes = () => {
   )
 }
 
-export default Allroutes
+export default Allroutes 
