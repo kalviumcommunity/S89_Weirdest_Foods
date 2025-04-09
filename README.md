@@ -21,4 +21,3 @@ This project taps into the fascinating and sometimes shocking world of unique cu
 
 ### Deployment Link: https://s89-weirdest-foods.onrender.com/ping
 
-### Frontend Link: https://s89-weirdest-foods-1.pages.dev/
