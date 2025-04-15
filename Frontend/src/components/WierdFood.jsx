@@ -82,9 +82,11 @@ const App = () => {
   return (
     <div>
       <h1>Weird Food of the World</h1>
+      <div className='food-list'>
       {dummyFoodData.map((food, index) => (
         <WeirdFoodItem key={index} food={food} />
       ))}
+      </div>
     </div>
   );
 };
