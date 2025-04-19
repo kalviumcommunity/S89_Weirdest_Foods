@@ -7,7 +7,8 @@ const Allroutes = () => {
   return (
     <Routes>
         <Route path='/about' element={<About/>}/>
-        <Route path='/' element={<WeirdFood/>}/>   
+        <Route path='/' element={<WeirdFood/>}/>
+        <Route path="/foodlist" element={<FoodList />} />   
     </Routes>
   )
 }
