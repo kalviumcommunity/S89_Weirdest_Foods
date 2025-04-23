@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getFoodItems, createFoodItem, updateFoodItem, deleteFoodItem } from './api';
+import { getFoodItems, createFoodItem, deleteFoodItem } from './api';
 
 const FoodList = () => {
   const [foods, setFoods] = useState([]);
@@ -9,7 +9,7 @@ const FoodList = () => {
     const fetchFoods = async () => {
       try {
         const response = await getFoodItems();
-        setFoods(response.data.data); // Adjust based on your backend response structure
+        setFoods(response.data.data); 
       } catch (error) {
         console.error('Error fetching food items:', error.message);
       }

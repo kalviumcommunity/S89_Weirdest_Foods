@@ -1,6 +1,6 @@
 import React from 'react';
 import './WierdFood.css'; // Assuming you have a CSS file for styling
-import './Navbar.jsx';
+import '../components/Navbar.jsx';
 
 // WeirdFoodItem Component
 const WeirdFoodItem = ({ food }) => {

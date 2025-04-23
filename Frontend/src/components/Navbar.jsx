@@ -1,18 +1,18 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './Navbar.css';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <nav className="navbar">
-      <ul className="nav-links">
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/about">About</Link>
-        </li>
-      </ul>
+    <nav style={{ padding: "10px", backgroundColor: "#007BFF", color: "white" }}>
+      <Link style={{ margin: "10px", color: "white", textDecoration: "none" }} to="/">
+        Home
+      </Link>
+      <Link style={{ margin: "10px", color: "white", textDecoration: "none" }} to="/about">
+        About
+      </Link>
+      <Link style={{ margin: "10px", color: "white", textDecoration: "none" }} to="/contact">
+        Contact
+      </Link>
     </nav>
   );
 };
