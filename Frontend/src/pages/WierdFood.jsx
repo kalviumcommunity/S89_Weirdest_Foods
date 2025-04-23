@@ -1,6 +1,6 @@
 import React from 'react';
 import './WierdFood.css'; // Assuming you have a CSS file for styling
-import './Navbar.jsx';
+import '../components/Navbar.jsx';
 
 // WeirdFoodItem Component
 const WeirdFoodItem = ({ food }) => {
@@ -83,8 +83,8 @@ const App = () => {
     <div>
       <h1>Weird Food of the World</h1>
       <div className='food-list'>
-      {dummyFoodData.map((food, index) => (
-        <WeirdFoodItem key={index} food={food} />
+        {dummyFoodData.map((food, index) => (
+          <WeirdFoodItem key={index} food={food} />
       ))}
       </div>
     </div>
