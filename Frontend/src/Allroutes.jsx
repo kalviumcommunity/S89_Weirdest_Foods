@@ -5,6 +5,7 @@ import WeirdFood from './components/WierdFood';
 import FoodList from './pages/FoodList';
 import Contact from './components/Contact';
 import AddEntityPage from './pages/AddEntityPage';
+import ManageEntitiesPage from './components/ManageEntitiesPage';
 
 const Allroutes = () => {
   return (
@@ -14,6 +15,7 @@ const Allroutes = () => {
         <Route path="/foodlist" element={<FoodList />} />
         <Route path="/contact" element={<Contact />} />  
         <Route path="/add-entity" element={<AddEntityPage />} />
+        <Route path="/manage-entities" element={<ManageEntitiesPage />} />
     </Routes>
   )
 }

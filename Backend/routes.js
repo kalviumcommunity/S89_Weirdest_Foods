@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import Item from './schema.js';
+
 const router = express.Router();
-const Item = require('./schema');
 
 router.post('/foods', async (req, res) => {
     try {
@@ -13,7 +14,6 @@ router.post('/foods', async (req, res) => {
     }
 });
 
-
 router.get('/foods/:id', async (req, res) => {
     try {
         const items = await Item.find(); 
@@ -23,7 +23,6 @@ router.get('/foods/:id', async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
-
 
 router.put('/foods/:id', async (req, res) => {
     try {
@@ -38,7 +37,6 @@ router.put('/foods/:id', async (req, res) => {
     }
 });
 
-
 router.delete('/foods/:id', async (req, res) => {
     try {
         const deletedItem = await Item.findByIdAndDelete(req.params.id);
@@ -52,4 +50,4 @@ router.delete('/foods/:id', async (req, res) => {
     }
 });
 
-module.exports = router; 
+export default router;
