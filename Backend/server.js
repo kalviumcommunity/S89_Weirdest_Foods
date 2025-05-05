@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import routes from './routes.js'; // Add `.js` extension for ES modules
+import authRoutes from './authRoutes.js';
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 app.use('/routes', routes);
+app.use('/auth', authRoutes);
 
 mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
