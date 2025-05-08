@@ -23,7 +23,7 @@ const Signup = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     // Validate username
     if (!formData.username.trim()) {
       newErrors.username = 'Username is required';
@@ -32,14 +32,14 @@ const Signup = () => {
     } else if (formData.username.length > 20) {
       newErrors.username = 'Username cannot exceed 20 characters';
     }
-    
+
     // Validate email
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
-    
+
     // Validate password
     if (!formData.password) {
       newErrors.password = 'Password is required';
@@ -48,12 +48,12 @@ const Signup = () => {
     } else if (!/\d/.test(formData.password)) {
       newErrors.password = 'Password must contain at least one number';
     }
-    
+
     // Validate confirm password
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -61,12 +61,12 @@ const Signup = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    
+
     // Clear error for this field when user starts typing
     if (errors[name]) {
       setErrors({ ...errors, [name]: '' });
     }
-    
+
     // Clear signup error when form changes
     if (signupError) {
       setSignupError('');
@@ -75,168 +75,262 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate form
     if (!validateForm()) {
       return;
     }
-    
+
     setIsSubmitting(true);
     setSignupError('');
-    
+
     try {
       // Remove confirmPassword before sending to API
       const { confirmPassword, ...userData } = formData;
-      await registerUser(userData);
-      navigate('/');
+      const response = await registerUser(userData);
+      console.log('Registration successful:', response.data);
+
+      // Show success message
+      alert('Registration successful! You are now logged in.');
+
+      // Force a small delay to ensure token is set in localStorage
+      setTimeout(() => {
+        // Redirect to home page
+        navigate('/');
+        // Reload the page to ensure all components recognize the authentication state
+        window.location.reload();
+      }, 100);
     } catch (error) {
       console.error('Signup error:', error);
-      
+
       if (error.response && error.response.data) {
         setSignupError(error.response.data.message || 'Registration failed. Please try again.');
       } else {
         setSignupError('Registration failed. Please try again later.');
       }
-    } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div style={{ 
-      maxWidth: '400px', 
-      margin: '40px auto', 
-      padding: '20px', 
-      boxShadow: '0 0 10px rgba(0,0,0,0.1)',
-      borderRadius: '8px',
-      backgroundColor: '#fff'
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: 'calc(100vh - 80px)',
+      padding: '20px',
+      backgroundColor: '#f8f9fa',
+      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
     }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Sign Up</h2>
-      
-      {signupError && (
-        <div style={{ 
-          padding: '10px', 
-          backgroundColor: '#f8d7da', 
-          color: '#721c24',
-          borderRadius: '4px',
-          marginBottom: '15px' 
-        }}>
-          {signupError}
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="username" style={{ display: 'block', marginBottom: '5px' }}>Username:</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            value={formData.username}
-            onChange={handleInputChange}
-            style={{ 
-              width: '100%', 
-              padding: '8px',
-              border: errors.username ? '1px solid #dc3545' : '1px solid #ced4da',
-              borderRadius: '4px'
+      <div style={{
+        width: '100%',
+        maxWidth: '500px',
+        padding: '40px',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.05)',
+        borderRadius: '12px',
+        backgroundColor: '#fff',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '6px',
+          background: 'linear-gradient(to right, #4A6FFF, #77AAFF)'
+        }}></div>
+
+        <h2 style={{
+          textAlign: 'center',
+          marginBottom: '30px',
+          fontSize: '28px',
+          fontWeight: '600',
+          color: '#333'
+        }}>Create Your Account</h2>
+
+        {signupError && (
+          <div style={{
+            padding: '12px 16px',
+            backgroundColor: '#FFF5F5',
+            color: '#E53E3E',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            border: '1px solid #FED7D7',
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+            <span style={{ marginRight: '8px', fontWeight: 'bold' }}>!</span>
+            {signupError}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '20px' }}>
+            <label htmlFor="username" style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '500',
+              color: '#4A5568'
+            }}>Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="johndoe"
+              value={formData.username}
+              onChange={handleInputChange}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                border: errors.username ? '1px solid #E53E3E' : '1px solid #E2E8F0',
+                borderRadius: '8px',
+                fontSize: '16px',
+                backgroundColor: '#FAFAFA',
+                transition: 'all 0.3s ease'
+              }}
+            />
+            {errors.username && (
+              <div style={{ color: '#E53E3E', fontSize: '14px', marginTop: '6px' }}>
+                {errors.username}
+              </div>
+            )}
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <label htmlFor="email" style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '500',
+              color: '#4A5568'
+            }}>Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="your@email.com"
+              value={formData.email}
+              onChange={handleInputChange}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                border: errors.email ? '1px solid #E53E3E' : '1px solid #E2E8F0',
+                borderRadius: '8px',
+                fontSize: '16px',
+                backgroundColor: '#FAFAFA',
+                transition: 'all 0.3s ease'
+              }}
+            />
+            {errors.email && (
+              <div style={{ color: '#E53E3E', fontSize: '14px', marginTop: '6px' }}>
+                {errors.email}
+              </div>
+            )}
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <label htmlFor="password" style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '500',
+              color: '#4A5568'
+            }}>Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="••••••••"
+              value={formData.password}
+              onChange={handleInputChange}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                border: errors.password ? '1px solid #E53E3E' : '1px solid #E2E8F0',
+                borderRadius: '8px',
+                fontSize: '16px',
+                backgroundColor: '#FAFAFA',
+                transition: 'all 0.3s ease'
+              }}
+            />
+            {errors.password && (
+              <div style={{ color: '#E53E3E', fontSize: '14px', marginTop: '6px' }}>
+                {errors.password}
+              </div>
+            )}
+            {!errors.password && (
+              <div style={{ fontSize: '13px', color: '#718096', marginTop: '6px' }}>
+                Password must be at least 6 characters and contain at least one number
+              </div>
+            )}
+          </div>
+
+          <div style={{ marginBottom: '24px' }}>
+            <label htmlFor="confirmPassword" style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '500',
+              color: '#4A5568'
+            }}>Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="••••••••"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                border: errors.confirmPassword ? '1px solid #E53E3E' : '1px solid #E2E8F0',
+                borderRadius: '8px',
+                fontSize: '16px',
+                backgroundColor: '#FAFAFA',
+                transition: 'all 0.3s ease'
+              }}
+            />
+            {errors.confirmPassword && (
+              <div style={{ color: '#E53E3E', fontSize: '14px', marginTop: '6px' }}>
+                {errors.confirmPassword}
+              </div>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            style={{
+              width: '100%',
+              padding: '14px',
+              backgroundColor: isSubmitting ? '#A0AEC0' : '#4A6FFF',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              marginBottom: '24px',
+              fontSize: '16px',
+              fontWeight: '600',
+              boxShadow: isSubmitting ? 'none' : '0 4px 6px rgba(74, 111, 255, 0.2)',
+              transition: 'all 0.3s ease'
             }}
-          />
-          {errors.username && (
-            <div style={{ color: '#dc3545', fontSize: '14px', marginTop: '5px' }}>
-              {errors.username}
-            </div>
-          )}
-        </div>
-        
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="email" style={{ display: 'block', marginBottom: '5px' }}>Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            style={{ 
-              width: '100%', 
-              padding: '8px',
-              border: errors.email ? '1px solid #dc3545' : '1px solid #ced4da',
-              borderRadius: '4px'
-            }}
-          />
-          {errors.email && (
-            <div style={{ color: '#dc3545', fontSize: '14px', marginTop: '5px' }}>
-              {errors.email}
-            </div>
-          )}
-        </div>
-        
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="password" style={{ display: 'block', marginBottom: '5px' }}>Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            style={{ 
-              width: '100%', 
-              padding: '8px',
-              border: errors.password ? '1px solid #dc3545' : '1px solid #ced4da',
-              borderRadius: '4px'
-            }}
-          />
-          {errors.password && (
-            <div style={{ color: '#dc3545', fontSize: '14px', marginTop: '5px' }}>
-              {errors.password}
-            </div>
-          )}
-        </div>
-        
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="confirmPassword" style={{ display: 'block', marginBottom: '5px' }}>Confirm Password:</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-            style={{ 
-              width: '100%', 
-              padding: '8px',
-              border: errors.confirmPassword ? '1px solid #dc3545' : '1px solid #ced4da',
-              borderRadius: '4px'
-            }}
-          />
-          {errors.confirmPassword && (
-            <div style={{ color: '#dc3545', fontSize: '14px', marginTop: '5px' }}>
-              {errors.confirmPassword}
-            </div>
-          )}
-        </div>
-        
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          style={{
-            width: '100%',
-            padding: '10px',
-            backgroundColor: isSubmitting ? '#6c757d' : '#007BFF',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: isSubmitting ? 'not-allowed' : 'pointer',
-            marginBottom: '15px'
-          }}
-        >
-          {isSubmitting ? 'Signing up...' : 'Sign Up'}
-        </button>
-        
-        <div style={{ textAlign: 'center' }}>
-          <p>
-            Already have an account? <Link to="/login" style={{ color: '#007BFF' }}>Login</Link>
-          </p>
-        </div>
-      </form>
+          >
+            {isSubmitting ? 'Creating Account...' : 'Create Account'}
+          </button>
+
+          <div style={{
+            textAlign: 'center',
+            color: '#718096',
+            fontSize: '15px'
+          }}>
+            <p>
+              Already have an account? <Link to="/login" style={{
+                color: '#4A6FFF',
+                fontWeight: '600',
+                textDecoration: 'none'
+              }}>Sign in</Link>
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/register', registerValidation, async (req, res) => {
   try {
     // Check if user already exists
-    const existingUser = await User.findOne({ 
+    const existingUser = await User.findOne({
       $or: [
         { email: req.body.email },
         { username: req.body.username }
@@ -64,7 +64,7 @@ router.post('/login', loginValidation, async (req, res) => {
   try {
     // Find user by email
     const user = await User.findOne({ email: req.body.email });
-    
+
     // Check if user exists
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -96,6 +96,21 @@ router.post('/login', loginValidation, async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Get all users (for dropdown)
+router.get('/users', async (req, res) => {
+  try {
+    // Only return necessary fields for the dropdown
+    const users = await User.find({}, 'username email _id');
+    res.status(200).json({
+      message: 'Users retrieved successfully',
+      data: users
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error.message);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });

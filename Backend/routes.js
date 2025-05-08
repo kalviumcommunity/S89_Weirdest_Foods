@@ -12,7 +12,13 @@ const router = express.Router();
 
 router.post('/foods', authenticateUser, createFoodValidation, async (req, res) => {
     try {
-        const newItem = new Item(req.body);
+        // Add the user ID to the item data
+        const itemData = {
+            ...req.body,
+            created_by: req.user.id
+        };
+
+        const newItem = new Item(itemData);
         await newItem.save();
         res.status(201).json({ message: 'Foods created successfully', data: newItem });
     } catch (error) {
@@ -31,7 +37,10 @@ router.post('/foods', authenticateUser, createFoodValidation, async (req, res) =
 
 router.get('/foods/:id', getFoodValidation, async (req, res) => {
     try {
-        const item = await Item.findById(req.params.id);
+        const item = await Item.findById(req.params.id)
+            .populate('created_by', 'username email')
+            .exec();
+
         if (!item) {
             return res.status(404).json({ message: 'Item not found' });
         }
@@ -45,7 +54,17 @@ router.get('/foods/:id', getFoodValidation, async (req, res) => {
 // Get all food items
 router.get('/foods', async (req, res) => {
     try {
-        const items = await Item.find();
+        // Check if there's a user filter
+        const filter = {};
+        if (req.query.userId) {
+            filter.created_by = req.query.userId;
+        }
+
+        // Populate the created_by field with user information
+        const items = await Item.find(filter)
+            .populate('created_by', 'username email')
+            .exec();
+
         res.status(200).json({ message: 'Food items retrieved successfully', data: items });
     } catch (error) {
         console.error('Error fetching items:', error.message);
