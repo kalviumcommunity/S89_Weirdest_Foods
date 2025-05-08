@@ -17,6 +17,7 @@ const AddEntityPage = () => {
   useEffect(() => {
     const fetchEntities = async () => {
       try {
+        // Get all food items with populated created_by field
         const response = await getFoodItems();
         if (response.data && response.data.data) {
           setEntities(response.data.data);
@@ -256,6 +257,11 @@ const AddEntityPage = () => {
                 Origin: {entity.origin}
               </div>
               <p style={{ margin: "5px 0 0 0" }}>{entity.description}</p>
+              {entity.created_by && (
+                <div style={{ fontSize: "12px", color: "#6c757d", marginTop: "10px" }}>
+                  Created by: {entity.created_by.username || 'Unknown user'}
+                </div>
+              )}
             </li>
           ))}
         </ul>

@@ -29,6 +29,16 @@ export const registerUser = async (userData) => {
   }
 };
 
+// Get all users for dropdown
+export const getAllUsers = async () => {
+  try {
+    return await axios.get(`${AUTH_URL}/users`);
+  } catch (error) {
+    handleApiError(error);
+    throw error;
+  }
+};
+
 export const loginUser = async (credentials) => {
   try {
     const response = await axios.post(`${AUTH_URL}/login`, credentials);
@@ -70,9 +80,12 @@ export const createFood = async (foodData) => {
 };
 
 // Get all food items
-export const getFoodItems = async () => {
+export const getFoodItems = async (userId = null) => {
   try {
-    return await axios.get(`${ROUTES_URL}/foods`);
+    const url = userId
+      ? `${ROUTES_URL}/foods?userId=${userId}`
+      : `${ROUTES_URL}/foods`;
+    return await axios.get(url);
   } catch (error) {
     handleApiError(error);
     throw error;
