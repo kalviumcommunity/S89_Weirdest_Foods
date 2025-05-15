@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { isAuthenticated, getCurrentUser, logoutUser } from "../api";
+import { isAuthenticated, getCurrentUser, logoutUser, checkAuthCookie } from "../api";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -10,8 +10,28 @@ const Navbar = () => {
 
   // Update auth state when location changes
   useEffect(() => {
-    setAuthenticated(isAuthenticated());
-    setCurrentUser(getCurrentUser());
+    const updateAuthState = async () => {
+      // Check token-based authentication
+      setAuthenticated(isAuthenticated());
+      setCurrentUser(getCurrentUser());
+
+      // Also check cookie-based authentication
+      const cookieAuth = await checkAuthCookie();
+      console.log('Navbar cookie auth check:', cookieAuth);
+
+      // If we have cookie auth but no token auth, we can use the cookie username
+      if (cookieAuth.authenticated && !isAuthenticated()) {
+        console.log('Using cookie authentication in Navbar');
+        setAuthenticated(true);
+        // If we don't have user data in localStorage but have cookie auth,
+        // we can at least display the username
+        if (!getCurrentUser() && cookieAuth.username) {
+          setCurrentUser({ username: cookieAuth.username });
+        }
+      }
+    };
+
+    updateAuthState();
   }, [location]);
 
   const linkStyle = {
@@ -44,15 +64,27 @@ const Navbar = () => {
     justifyContent: "center"
   };
 
-  const handleLogout = () => {
-    logoutUser();
-    // Update state immediately
-    setAuthenticated(false);
-    setCurrentUser(null);
-    // Navigate to login page
-    navigate('/login');
-    // Optional: reload the page to reset all states
-    // window.location.reload();
+  const handleLogout = async () => {
+    try {
+      // Call the async logoutUser function
+      const result = await logoutUser();
+
+      if (result.success) {
+        // Update state immediately
+        setAuthenticated(false);
+        setCurrentUser(null);
+        // Navigate to login page
+        navigate('/login');
+        // Optional: reload the page to reset all states
+        // window.location.reload();
+      } else {
+        console.error('Logout failed:', result.error);
+        alert('Logout failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      alert('Logout failed. Please try again.');
+    }
   };
 
   return (
