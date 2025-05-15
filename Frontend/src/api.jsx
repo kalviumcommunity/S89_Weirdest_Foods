@@ -4,6 +4,9 @@ const API_URL = 'http://localhost:8080'; // Base URL
 const ROUTES_URL = `${API_URL}/routes`; // Routes endpoint
 const AUTH_URL = `${API_URL}/auth`; // Auth endpoint
 
+// Configure axios to include credentials (cookies)
+axios.defaults.withCredentials = true;
+
 // Set auth token for requests
 export const setAuthToken = (token) => {
   if (token) {
@@ -54,10 +57,21 @@ export const loginUser = async (credentials) => {
   }
 };
 
-export const logoutUser = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  setAuthToken(null);
+export const logoutUser = async () => {
+  try {
+    // Call the logout endpoint to clear the cookie
+    await axios.post(`${AUTH_URL}/logout`);
+
+    // Clear local storage and auth token
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setAuthToken(null);
+
+    return { success: true };
+  } catch (error) {
+    handleApiError(error);
+    return { success: false, error };
+  }
 };
 
 export const getCurrentUser = () => {
@@ -67,6 +81,17 @@ export const getCurrentUser = () => {
 
 export const isAuthenticated = () => {
   return localStorage.getItem('token') !== null;
+};
+
+// Check authentication status using cookie
+export const checkAuthCookie = async () => {
+  try {
+    const response = await axios.get(`${AUTH_URL}/check-auth`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+    return { authenticated: false };
+  }
 };
 
 // Create a new food item
