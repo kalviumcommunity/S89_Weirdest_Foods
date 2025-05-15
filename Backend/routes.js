@@ -6,7 +6,12 @@ import {
   deleteFoodValidation,
   getFoodValidation
 } from './validators.js';
-import { authenticateUser, isAdmin } from './authMiddleware.js';
+import {
+  authenticateUser,
+  isAdmin,
+  refreshCookie,
+  authenticateWithCookie
+} from './authMiddleware.js';
 
 const router = express.Router();
 
@@ -35,7 +40,7 @@ router.post('/foods', authenticateUser, createFoodValidation, async (req, res) =
     }
 });
 
-router.get('/foods/:id', getFoodValidation, async (req, res) => {
+router.get('/foods/:id', refreshCookie, getFoodValidation, async (req, res) => {
     try {
         const item = await Item.findById(req.params.id)
             .populate('created_by', 'username email')
@@ -52,7 +57,7 @@ router.get('/foods/:id', getFoodValidation, async (req, res) => {
 });
 
 // Get all food items
-router.get('/foods', async (req, res) => {
+router.get('/foods', refreshCookie, async (req, res) => {
     try {
         // Check if there's a user filter
         const filter = {};
@@ -116,6 +121,31 @@ router.delete('/foods/:id', authenticateUser, deleteFoodValidation, async (req, 
         }
         res.status(500).json({ message: 'Internal Server Error' });
     }
+});
+
+// Test route for cookie authentication
+router.get('/cookie-protected', authenticateWithCookie, (req, res) => {
+    res.status(200).json({
+        message: 'You accessed a cookie-protected route',
+        user: {
+            username: req.user.username,
+            email: req.user.email,
+            role: req.user.role
+        }
+    });
+});
+
+// Test route for dual authentication (token or cookie)
+router.get('/dual-protected', authenticateUser, (req, res) => {
+    res.status(200).json({
+        message: 'You accessed a dual-protected route',
+        user: {
+            username: req.user.username,
+            email: req.user.email,
+            role: req.user.role
+        },
+        authMethod: req.authMethod || 'unknown'
+    });
 });
 
 export default router;
