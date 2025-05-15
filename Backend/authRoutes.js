@@ -42,6 +42,14 @@ router.post('/register', registerValidation, async (req, res) => {
       { expiresIn: '24h' }
     );
 
+    // Set username in cookie
+    res.cookie('username', newUser.username, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      sameSite: 'lax', // Helps with CSRF
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
     // Return success response with token
     res.status(201).json({
       message: 'User registered successfully',
@@ -83,6 +91,14 @@ router.post('/login', loginValidation, async (req, res) => {
       { expiresIn: '24h' }
     );
 
+    // Set username in cookie
+    res.cookie('username', user.username, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      sameSite: 'lax', // Helps with CSRF
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
     // Return success response with token
     res.status(200).json({
       message: 'Login successful',
@@ -111,6 +127,43 @@ router.get('/users', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching users:', error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Logout user
+router.post('/logout', (req, res) => {
+  try {
+    // Clear the username cookie
+    res.clearCookie('username', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    });
+
+    res.status(200).json({ message: 'Logout successful' });
+  } catch (error) {
+    console.error('Logout error:', error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Check if user is authenticated via cookie
+router.get('/check-auth', (req, res) => {
+  try {
+    // Check if username cookie exists
+    const username = req.cookies.username;
+
+    if (username) {
+      return res.status(200).json({
+        authenticated: true,
+        username
+      });
+    }
+
+    res.status(200).json({ authenticated: false });
+  } catch (error) {
+    console.error('Auth check error:', error.message);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
